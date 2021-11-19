@@ -1,0 +1,32 @@
+unit rankingVendedores;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.ComCtrls,
+  Vcl.Grids, Vcl.DBGrids;
+
+type
+  TFrmConsultarVendedores = class(TForm)
+    DBGrid1: TDBGrid;
+    dataInicial: TDateTimePicker;
+    dataFinal: TDateTimePicker;
+    Label2: TLabel;
+    Label1: TLabel;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmConsultarVendedores: TFrmConsultarVendedores;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+end.

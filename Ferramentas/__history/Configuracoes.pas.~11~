@@ -1,0 +1,67 @@
+unit Configuracoes;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+
+type
+  TFrmConfig = class(TForm)
+    Panel1: TPanel;
+    Label2: TLabel;
+    CheckBoxImpressora: TCheckBox;
+    btnSalvar: TButton;
+    procedure FormShow(Sender: TObject);
+    procedure CheckBoxImpressoraClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmConfig: TFrmConfig;
+
+config_parametro : string;
+config_impressora : string;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+procedure TFrmConfig.CheckBoxImpressoraClick(Sender: TObject);
+begin
+if CheckBoxImpressora.Checked = true then
+    config_impressora := 's';
+end;
+
+procedure TFrmConfig.FormShow(Sender: TObject);
+
+//config_parametro : string;
+//config_parametro : string;
+begin
+                  dm.tb_config.Active := true;
+
+//VERIFICAR CONFIGURAÇÕES
+                   dm.query_configuracoes.Close;
+                   dm.query_configuracoes.SQL.Clear;
+                   dm.query_configuracoes.SQL.Add('SELECT * FROM configuracoes');
+                   dm.query_configuracoes.Open;
+                   MessageDlg(config_impressora, mtInformation, mbOKCancel, 0);
+                   if not dm.query_configuracoes.isEmpty then
+                     begin
+                       config_impressora :=  dm.query_configuracoes['config where item = impressora'];
+                        MessageDlg(config_impressora, mtInformation, mbOKCancel, 0);
+                       exit;
+                     end
+                     else
+                      CheckBoxImpressora.Checked := false;
+
+
+
+end;
+
+end.

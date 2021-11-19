@@ -1,0 +1,43 @@
+unit ContasPagar;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.ComCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.Buttons;
+
+type
+  TFrmContasapagar = class(TForm)
+    BtnExcluir: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    btnNovo: TSpeedButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label5: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    grid: TDBGrid;
+    dataInicial: TDateTimePicker;
+    dataFinal: TDateTimePicker;
+    cbduplicata: TComboBox;
+    rbemissao: TRadioButton;
+    rbvencimento: TRadioButton;
+    Panel1: TPanel;
+    Edtcodcli: TEdit;
+    Panel2: TPanel;
+    Label6: TLabel;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmContasapagar: TFrmContasapagar;
+
+implementation
+
+{$R *.dfm}
+
+end.

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2021/03/18 20:09:06.000.710,C:\Users\tic\Documents\Embarcadero\Studio\Projects\ProjectGroup1.groupproj=C:\SistemaClickVendas\SystemaClickVendas.groupproj</Transaction>
+  </Transactions>
+	<Default.Personality>
+		<Projects ActiveProject="C:\SistemaClickVendas\SistemaClickVendas.dproj"/>
+	</Default.Personality>
+</BorlandProject>

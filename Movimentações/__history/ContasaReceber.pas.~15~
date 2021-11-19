@@ -1,0 +1,135 @@
+unit ContasaReceber;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ComCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls;
+
+type
+  TFrmContasReceber = class(TForm)
+    grid: TDBGrid;
+    BtnExcluir: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    btnNovo: TSpeedButton;
+    dataInicial: TDateTimePicker;
+    dataFinal: TDateTimePicker;
+    cbduplicata: TComboBox;
+    rbemissao: TRadioButton;
+    rbvencimento: TRadioButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Panel1: TPanel;
+    Label5: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Edtcodcli: TEdit;
+    Panel2: TPanel;
+    Label6: TLabel;
+    procedure FormShow(Sender: TObject);
+    procedure dataInicialChange(Sender: TObject);
+    procedure dataFinalChange(Sender: TObject);
+    procedure cbduplicataChange(Sender: TObject);
+    procedure EdtcodcliChange(Sender: TObject);
+  private
+    { Private declarations }
+    procedure buscardata;
+  public
+    { Public declarations }
+
+  end;
+
+var
+  FrmContasReceber: TFrmContasReceber;
+
+implementation
+
+{$R *.dfm}             // cliente LIKE '%demil%'
+
+uses Modulo;
+
+procedure TFrmContasReceber.buscardata;
+begin
+
+
+ dm.query_duplicata.Close;
+ dm.query_duplicata.SQL.Clear;
+  if Edtcodcli.Text <> '' then
+    begin
+      if rbemissao.Checked = true then
+        begin
+         dm.query_duplicata.SQL.Add('select * from duplicata where data_cad >= :dataInicial and data_cad <= :dataFinal and situacao = :situacao and id_cliente = :id_cliente order by id desc') ;
+         dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+         dm.query_duplicata.ParamByName('id_cliente').Value := Edtcodcli.Text;
+          end
+          else
+          begin
+           dm.query_duplicata.SQL.Add('select * from duplicata where data_venc >= :dataInicial and data_venc <= :dataFinal and situacao = :situacao and id_cliente = :id_cliente order by id desc') ;
+           dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+           dm.query_duplicata.ParamByName('id_cliente').Value := Edtcodcli.Text;
+        end;
+
+
+        dm.query_duplicata.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+        dm.query_duplicata.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+        dm.query_duplicata.Open;
+    end
+    else
+    begin
+        if rbemissao.Checked = true then
+          begin
+           dm.query_duplicata.SQL.Add('select * from duplicata where data_cad >= :dataInicial and data_cad <= :dataFinal and situacao = :situacao order by id desc') ;
+           dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+            end
+            else
+            begin
+             dm.query_duplicata.SQL.Add('select * from duplicata where data_venc >= :dataInicial and data_venc <= :dataFinal and situacao = :situacao order by id desc') ;
+             dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+          end;
+
+
+          dm.query_duplicata.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+          dm.query_duplicata.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+          dm.query_duplicata.Open;
+    end
+
+
+end;
+
+procedure TFrmContasReceber.cbduplicataChange(Sender: TObject);
+begin
+buscardata;
+end;
+
+procedure TFrmContasReceber.dataFinalChange(Sender: TObject);
+begin
+buscardata;
+end;
+
+procedure TFrmContasReceber.dataInicialChange(Sender: TObject);
+begin
+buscardata;
+end;
+
+procedure TFrmContasReceber.EdtcodcliChange(Sender: TObject);
+begin
+buscardata;
+end;
+
+procedure TFrmContasReceber.FormShow(Sender: TObject);
+begin
+rbvencimento.Checked := true;
+dm.tb_duplicata.Active := False;
+dm.tb_duplicata.Active := True;
+
+   dm.query_duplicata.Close;
+   dm.query_duplicata.SQL.Clear;
+   dm.query_duplicata.SQL.Add('select * from duplicata WHERE data_venc = curDate() order by id desc') ;
+   dm.query_duplicata.Open;
+   TFloatField( dm.query_duplicata.FieldByName('valor')).DisplayFormat:='R$ #,,,,0.00';
+   dataInicial.Date := Date;
+   dataFinal.Date := Date;
+end;
+
+end.

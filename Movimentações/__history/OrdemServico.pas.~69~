@@ -1,0 +1,951 @@
+unit OrdemServico;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.MPlayer;
+
+type
+  TFrmOrdemServico = class(TForm)
+    DbgridProdutos: TDBGrid;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    DbgridServicos: TDBGrid;
+    btnBuscarProduto: TButton;
+    btnRemoverProduto: TButton;
+    EdtCodProdutos: TEdit;
+    EdtQuantidadePro: TEdit;
+    Panel5: TPanel;
+    Label1: TLabel;
+    Label8: TLabel;
+    Panel6: TPanel;
+    Label3: TLabel;
+    Label2: TLabel;
+    Label5: TLabel;
+    Label4: TLabel;
+    EdtTel: TMaskEdit;
+    EdtEndereco: TEdit;
+    EdtNome: TEdit;
+    Panel3: TPanel;
+    EdtBuscarNome: TEdit;
+    rbCPF: TRadioButton;
+    rbNomeCliente: TRadioButton;
+    DbgridOS: TDBGrid;
+    cbCargo: TComboBox;
+    Panel4: TPanel;
+    Panel7: TPanel;
+    Panel8: TPanel;
+    BtnEditar: TSpeedButton;
+    BtnExcluir: TSpeedButton;
+    btnNovo: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    EdtQuantidadeServ: TEdit;
+    EdtCodservicos: TEdit;
+    btnBuscarServicos: TButton;
+    btnremoverserv: TButton;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label9: TLabel;
+    Obs: TMemo;
+    EdtTotalServicos: TEdit;
+    Label11: TLabel;
+    EdtTotalprodutos: TEdit;
+    Label10: TLabel;
+    Panel9: TPanel;
+    Label12: TLabel;
+    btnEncerrarOS: TSpeedButton;
+    edtTotalOS: TEdit;
+    MediaPlayer1: TMediaPlayer;
+    btnBuscarCli: TSpeedButton;
+    procedure FormShow(Sender: TObject);
+    procedure EdtCodProdutosChange(Sender: TObject);
+    procedure EdtCodservicosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure btnBuscarProdutoClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure EdtTotalprodutosChange(Sender: TObject);
+    procedure EdtNomeKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnBuscarCliClick(Sender: TObject);
+    procedure btnBuscarServicosClick(Sender: TObject);
+  private
+    { Private declarations }
+     procedure habilitarcampos;
+     procedure ativartabelas;
+     procedure limparcampos;
+     procedure limparvariaveis;
+     procedure listarProOS;
+     procedure listarServOS;
+     procedure listarOS;
+     procedure associarCamposOS;
+     procedure associarCamposDetProOS;
+     procedure associarCamposDetServOS;
+     procedure salvarItensProdetOs;
+    procedure salvarItensServdetOS;
+    procedure salvarOs;
+    procedure buscarProduto;
+    procedure buscarServicos;
+    procedure limparProdutos;
+    procedure limparServicos;
+    procedure totalizarOS;
+    procedure salvarOrdemS;
+
+   procedure imprimirOS;
+
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmOrdemServico: TFrmOrdemServico;
+  estoque2, estoque, totalItem, ValorRecebido : double;
+
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo, Produtos, Clientes, CadastroServicos;
+
+procedure TFrmOrdemServico.associarCamposDetProOS;
+begin
+  dm.tb_detalhes_os.FieldByName('id_os').Value := 0;
+  ///dm.tb_detalhes_os.FieldByName('produto').Value := edtProduto.Text;
+  dm.tb_detalhes_os.FieldByName('valor').Value := valorProduto;
+
+  dm.tb_detalhes_os.FieldByName('quantidade').Value := strToFloat(EdtQuantidadePro.Text);
+
+  dm.tb_detalhes_os.FieldByName('total').Value := strToFloat(EdtTotalprodutos.Text);
+
+  dm.tb_detalhes_os.FieldByName('id_item').Value := idProduto;
+  dm.tb_detalhes_os.FieldByName('item_descricao').Value := item_descricao;
+  dm.tb_detalhes_os.FieldByName('item_tipo').Value := 'p';
+  dm.tb_detalhes_os.FieldByName('funcionario').Value := nomeUsuario;
+  dm.tb_detalhes_os.FieldByName('data').Value := dateTOstr(Date);
+end;
+
+procedure TFrmOrdemServico.associarCamposDetServOS;
+begin
+   dm.tb_detalhes_os.FieldByName('id_os').Value := '0';
+  ///dm.tb_detalhes_os.FieldByName('produto').Value := edtProduto.Text;
+  dm.tb_detalhes_os.FieldByName('valor').Value := valorProduto;
+  dm.tb_detalhes_os.FieldByName('quantidade').Value := strToFloat(EdtQuantidadeServ.Text);
+  dm.tb_detalhes_os.FieldByName('total').Value := strToFloat(EdtTotalServicos.Text);
+  dm.tb_detalhes_os.FieldByName('id_item').Value := idProduto;
+  dm.tb_detalhes_os.FieldByName('item_tipo').Value := 's';
+  dm.tb_detalhes_os.FieldByName('item_descricao').Value := item_descricao;
+  dm.tb_detalhes_os.FieldByName('funcionario').Value := nomeUsuario;
+  dm.tb_detalhes_os.FieldByName('data').Value := dateTOstr(Date);
+
+
+
+end;
+
+procedure TFrmOrdemServico.associarCamposOS;
+begin
+  dm.tb_os.FieldByName('valor').Value := totalOs;
+  dm.tb_os.FieldByName('data').Value := DateToStr(Date);
+  dm.tb_os.FieldByName('hora').Value := TimeToStr(Time);
+  dm.tb_os.FieldByName('funcionario').Value := nomeUsuario;
+  dm.tb_os.FieldByName('desconto').Value := descontoOS;
+  dm.tb_os.FieldByName('valor_recebido').Value := ValorRecebidoOs;
+  dm.tb_os.FieldByName('troco').Value := trocoOs;
+  dm.tb_os.FieldByName('cliente').Value := nomeClientes;
+  dm.tb_os.FieldByName('formadepagamento').Value := formadepagamento;
+  dm.tb_os.FieldByName('status').Value := 'Aberta';
+  dm.tb_os.FieldByName('caixa').Value := numeroCaixa;
+  dm.tb_os.FieldByName('statuscaixa').Value := 'aberto';
+  dm.tb_os.FieldByName('observacoes').Value := Obs.Lines.Text;
+
+
+end;
+
+procedure TFrmOrdemServico.ativartabelas;
+begin
+ listarProOS;
+ listarServOS;
+ listarOS;
+ dm.tb_os.Active := true;
+ dm.tb_os.Insert;
+ dm.tb_detalhes_os.Active := true;
+end;
+
+procedure TFrmOrdemServico.btnBuscarCliClick(Sender: TObject);
+begin
+     chamadaClidOS := '1';
+     janelaCliente := 'aberto';
+     FrmClientes := TFrmClientes.Create(self);
+     FrmClientes.Show;
+
+end;
+
+procedure TFrmOrdemServico.btnBuscarProdutoClick(Sender: TObject);
+begin
+    chamadaprodOS := '1';
+
+    FrmProdutos := TFrmProdutos.Create(self);
+    FrmProdutos.Show;
+end;
+
+procedure TFrmOrdemServico.btnBuscarServicosClick(Sender: TObject);
+begin
+
+    chamadaBuscarServ := '1';
+    FrmCadastroServicos := TFrmCadastroServicos.Create(self);
+    FrmCadastroServicos.Show;
+
+  end;
+
+procedure TFrmOrdemServico.btnNovoClick(Sender: TObject);
+begin
+habilitarcampos;
+end;
+
+procedure TFrmOrdemServico.btnSalvarClick(Sender: TObject);
+begin
+//dm.tb_os.Insert;
+dm.tb_vendas.Insert;
+dm.tb_os.Active := true;
+dm.tb_detalhes_os.Active := true;
+salvarOrdemS;
+
+listarProOS;
+listarServOS;
+ativartabelas;
+imprimirOS;
+limparvariaveis;
+
+
+end;
+
+procedure TFrmOrdemServico.buscarProduto;
+ begin
+ {if chamadaprodOS <> '1' then
+   begin }
+                 ///  CÓDIGO COM WIEW
+              dm.Query_wiew_pro_pdv.Close;
+              dm.Query_wiew_pro_pdv.SQL.Clear;
+              dm.Query_wiew_pro_pdv.SQL.Add('SELECT * from pro_pdv where codigo = :codigo');
+              dm.Query_wiew_pro_pdv.ParamByName('codigo').Value := EdtCodProdutos.Text;
+              ///dm.query_produtos.ParamByName('codigoautomatico').Value := edtCodBarras.Text;
+              dm.Query_wiew_pro_pdv.Open;
+
+
+           if not dm.Query_wiew_pro_pdv.isEmpty then
+                 begin
+
+                   EdtQuantidadePro.enabled := true;
+
+                   item_descricao :=  dm.Query_wiew_pro_pdv['nome'];
+
+                   valorProduto :=  dm.Query_wiew_pro_pdv['valor'];
+
+                   estoque :=  dm.Query_wiew_pro_pdv['estoque'];
+
+                   idProduto :=  dm.Query_wiew_pro_pdv['id'];
+
+
+               //NO PDV NAO É NECESSÁRIO VERIFICAR ESTOQUE NA VENDA
+
+
+                  {if strtoFloat(edtEstoque.Text) < StrToFloat(edtQuantidade.Text) then
+                   begin
+                       MessageDlg('Não existe produtos em estoque', mtInformation, mbOKCancel, 0);
+
+
+                       exit;
+                   end; }
+
+
+                   totalItem := strToFloat(EdtQuantidadePro.Text) * valorProduto;
+                   totalVenda := totalVenda + totalItem;
+                   totalItem := 0;
+
+                   //edtTotal.Text := FormatFloat('R$ #,,,,0.00', totalItem);
+                   //edtSubTotal.Text := FormatFloat('R$ #,,,,0.00', totalVenda);
+                   EdtTotalprodutos.Text := FloatToStr(totalVenda);
+
+                   totalcomDesconto := totalVenda;
+
+                   ValorRecebido := totalVenda;
+
+                   dm.tb_detalhes_os.Insert;
+
+                   salvarItensProdetOs;
+
+                   chamadaprodOS :='';
+
+
+                   //EdtTotalprodutos.Text := '';
+                   end
+                   {else
+                   begin
+                   limparProdutos;
+
+                     dm.Query_wiew_pro_pdv.Close;
+                    dm.Query_wiew_pro_pdv.SQL.Clear;
+                    dm.Query_wiew_pro_pdv.SQL.Add('SELECT * from pro_pdv where id = :id');
+                    dm.Query_wiew_pro_pdv.ParamByName('id').Value := EdtCodProdutos.Text;
+                    ///dm.query_produtos.ParamByName('codigoautomatico').Value := edtCodBarras.Text;
+                    dm.Query_wiew_pro_pdv.Open;
+
+                        if not dm.Query_wiew_pro_pdv.isEmpty then
+                        begin
+
+                             EdtQuantidadePro.enabled := true;
+
+                             item_descricao :=  dm.Query_wiew_pro_pdv['nome'];
+                             //edtDescrição.Text :=  dm.Query_wiew_pro_pdv['descricao'];
+                             valorProduto :=  dm.Query_wiew_pro_pdv['valor'];
+
+                             estoque :=  dm.Query_wiew_pro_pdv['estoque'];
+
+                             idProduto :=  dm.Query_wiew_pro_pdv['id'];
+
+                             //ExibeFoto(dm.Query_wiew_pro_pdv, 'imagem', imagem);
+
+
+
+                         //NO PDV NAO É NECESSÁRIO VERIFICAR ESTOQUE NA VENDA
+
+
+                            {if strtoFloat(edtEstoque.Text) < StrToFloat(edtQuantidade.Text) then
+                             begin
+                                 MessageDlg('Não existe produtos em estoque', mtInformation, mbOKCancel, 0);
+
+
+                                 exit;
+                             end; }
+
+
+                         {  totalItem := strToFloat(EdtQuantidadePro.Text) * valorProduto;
+                             totalVenda := totalVenda + totalItem;
+
+                             //edtTotal.Text := FormatFloat('R$ #,,,,0.00', totalItem);
+                             //edtSubTotal.Text := FormatFloat('R$ #,,,,0.00', totalVenda);
+                               EdtTotalprodutos.Text := FloatToStr(totalVenda);
+
+                             totalcomDesconto := totalVenda;
+                             ValorRecebido := totalVenda;
+
+                             dm.tb_detalhes_os.Insert;
+
+                             salvarItensProdetOs;
+
+                             //EdtTotalprodutos.Text := totalVenda;
+                        end;}
+
+
+
+
+
+end;
+
+procedure TFrmOrdemServico.buscarServicos;
+begin
+     ///  CÓDIGO COM WIEW
+              dm.query_servicos.Close;
+              dm.query_servicos.SQL.Clear;
+              dm.query_servicos.SQL.Add('SELECT * from servicos where id = :codigo');
+              dm.query_servicos.ParamByName('codigo').Value := EdtCodservicos.Text;
+              ///dm.query_produtos.ParamByName('codigoautomatico').Value := edtCodBarras.Text;
+              dm.query_servicos.Open;
+
+
+           if not dm.query_servicos.isEmpty then
+                 begin
+
+                   EdtQuantidadeServ.enabled := true;
+
+                   item_descricao :=  dm.query_servicos['nome'];
+
+                   valorProduto :=  dm.query_servicos['valor'];
+
+
+                   idProduto :=  dm.query_servicos['id'];
+
+
+
+                   totalItemServ := strToFloat(EdtQuantidadeServ.Text)* valorProduto;
+                   totalVendaServ := totalVendaServ + totalItemServ;
+
+
+                   //edtTotal.Text := FormatFloat('R$ #,,,,0.00', totalItem);
+                   //edtSubTotal.Text := FormatFloat('R$ #,,,,0.00', totalVenda);
+                   EdtTotalServicos.Text := FloatToStr(totalVendaServ);
+
+                   totalcomDesconto := totalVendaServ;
+                   ValorRecebido := totalVendaServ;
+
+                   dm.tb_detalhes_os.Insert;
+
+                   salvarItensServdetOs;
+
+                   //EdtTotalServicos.Text := totalVenda;
+                   end
+                   else
+                   begin
+                   limparServicos;
+                   end;
+
+
+
+
+end;
+
+procedure TFrmOrdemServico.EdtCodProdutosChange(Sender: TObject);
+begin
+buscarProduto;
+
+end;
+
+procedure TFrmOrdemServico.EdtCodservicosKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+
+if key = VK_RETURN	 then
+begin
+   buscarServicos;
+   totalizarOS;
+end;
+
+end;
+
+procedure TFrmOrdemServico.EdtNomeKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_F6 then
+      begin
+      chamadaClidOS := '1';
+      janelaCliente := 'aberto';
+      FrmClientes := TFrmClientes.Create(self);
+      FrmClientes.Show;
+      end;
+end;
+
+procedure TFrmOrdemServico.EdtTotalprodutosChange(Sender: TObject);
+begin
+//edtTotalOS.Text := strToFloat(EdtTotalServicos.Text) +  strToFloat(EdtTotalprodutos.Text);
+end;
+
+procedure TFrmOrdemServico.FormActivate(Sender: TObject);
+begin
+ShowMessage(janelaProdutoOS);
+ if chamadaProdOSVADD = '1' then
+     begin
+       if janelaProdutoOS = 'fechado' then
+           begin
+              EdtCodProdutos.Text := codigoProduto;
+            end
+           else
+         FrmProdutos.Close;
+
+        end;
+
+ if chamadaClidOS = '1' then
+     begin
+        if janelaCliente = 'fechado' then
+         begin
+            EdtNome.Text := nomeClientes;
+            EdtTel.Text := telefoneCliente;
+            EdtEndereco.Text := enderecoCliente;
+            EdtCodProdutos.SetFocus;
+            chamadaClidOS := '';
+        exit
+         end
+         else
+         FrmClientes.Close;
+
+      end;
+
+  if chamadaServOSVADD = '1' then
+     begin
+        if janelaServicos = 'fechado' then
+         begin
+
+            EdtCodservicos.Text := idServ;
+            EdtCodservicos.SetFocus;
+            chamadaServOSVADD := '';
+            buscarServicos;
+            totalizarOS;
+            exit
+         end
+         else
+         FrmCadastroServicos.Close;
+
+      end;
+
+
+
+end;
+
+procedure TFrmOrdemServico.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  idProduto, IddetVenda : integer;
+  quantItem : Double;
+  estoqueP   : Double;
+  estoqueDevolver : Double;
+  tipo_item : string;
+
+begin
+
+frmVen := '';
+chamada := '';
+
+MediaPlayer1.Destroy;
+
+dm.query_detalhesOSCoringa.Close;
+dm.query_detalhesOSCoringa.SQL.Clear;
+dm.query_detalhesOSCoringa.SQL.Add('SELECT * FROM detalhes_os where id_os = :id_os');
+dm.query_detalhesOSCoringa.ParamByName('id_os').Value := 0;
+dm.query_detalhesOSCoringa.open;
+
+
+
+                                           //dm.query_det_vendas.Eof
+           if not dm.query_detalhesOSCoringa.IsEmpty then
+              begin
+                while not dm.query_detalhesOSCoringa.Eof  do
+
+                     begin
+                     //tipo_item := dm.query_coringa['item_tipo'];
+                     idProduto :=  dm.query_detalhesOSCoringa['id_item'];
+
+                     quantItem :=  dm.query_detalhesOSCoringa['quantidade'];
+
+                     IddetVenda := dm.query_detalhesOSCoringa['id'];
+
+                    //ATUALIZAR O ESTOQUE
+
+                   //RECUPERAR O ESTOQUE ATUAL
+                       dm.query_produtos.Close;
+                       dm.query_produtos.SQL.Clear;
+                       dm.query_produtos.SQL.Add('select * from produtos where id = :id');
+                       dm.query_produtos.ParamByName('id').Value := idProduto;
+                       dm.query_produtos.Open;
+                       if not dm.query_produtos.IsEmpty  then
+                          begin
+
+
+                           estoqueP :=  dm.query_produtos['estoque'];
+                           estoqueDevolver := estoqueP + quantItem;
+
+                           dm.query_produtos.Close;
+                           dm.query_produtos.SQL.Clear;
+                           dm.query_produtos.SQL.Add('UPDATE produtos set estoque = :estoque where id = :id');
+                           dm.query_produtos.ParamByName('estoque').Value := estoqueDevolver;
+                           dm.query_produtos.ParamByName('id').Value := idProduto;
+                           dm.query_produtos.ExecSQL;
+                          end;
+                       {if not dm.query_coringa.isEmpty then
+                     begin
+
+
+                     end;}
+
+
+
+
+
+
+
+
+
+
+                   dm.query_coringa.Close;
+                   dm.query_coringa.SQL.Clear;
+                   dm.query_coringa.SQL.Add('DELETE FROM detalhes_os where id = :id');
+                   dm.query_coringa.ParamByName('id').Value := IddetVenda;
+                   dm.query_coringa.Execute;
+
+
+
+                   dm.query_detalhesOSCoringa.Next;
+
+
+
+                  end;
+
+
+
+                end
+
+
+
+
+end;
+
+procedure TFrmOrdemServico.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+
+begin
+if key = VK_F1	 then
+    begin
+         chamadaprodOS := '1';
+
+          FrmProdutos := TFrmProdutos.Create(self);
+          FrmProdutos.Show;
+     end;
+
+if key = VK_F2	 then
+    begin
+       FrmCadastroServicos := TFrmCadastroServicos.Create(self);
+       FrmCadastroServicos.Show;
+
+     end;
+
+ if key = VK_F3	 then
+      begin
+
+           dm.tb_os.Active := true;
+           dm.tb_detalhes_os.Active := true;
+
+           habilitarcampos;
+      end;
+
+ if key = VK_F4	 then
+    begin
+        dm.tb_vendas.Insert;
+        dm.tb_os.Active := true;
+        dm.tb_detalhes_os.Active := true;
+        salvarOrdemS;
+
+        listarProOS;
+        listarServOS;
+        ativartabelas;
+        limparvariaveis;
+
+     end;
+
+    if key = VK_F6	 then
+      begin
+         chamadaClidOS := '1';
+         janelaCliente := 'aberto';
+         FrmClientes := TFrmClientes.Create(self);
+         FrmClientes.Show;
+
+      end;
+
+end;
+
+procedure TFrmOrdemServico.FormShow(Sender: TObject);
+begin
+
+ativartabelas;
+habilitarcampos;
+
+limparvariaveis;
+
+
+ end;
+
+procedure TFrmOrdemServico.habilitarcampos;
+begin
+EdtNome.Enabled := true;
+EdtEndereco.Enabled := true;
+EdtTel.Enabled := true;
+EdtQuantidadePro.Enabled := true;
+EdtQuantidadePro.Enabled := true;
+EdtQuantidadeServ.Enabled := true;
+EdtCodservicos.Enabled := true;
+EdtCodProdutos.Enabled := true;
+btnBuscarProduto.Enabled := true;
+btnRemoverProduto.Enabled := true;
+btnBuscarServicos.Enabled := true;
+btnremoverserv.Enabled := true;
+btnSalvar.Enabled := true;
+EdtQuantidadePro.Text := '1';
+EdtQuantidadeServ.Text := '1';
+EdtNome.SetFocus;
+end;
+
+procedure TFrmOrdemServico.imprimirOS;
+begin
+      dm.query_os.Close;
+      dm.query_os.SQL.Clear;
+      dm.query_os.SQL.Add('SELECT * from ordens_servicos where id = :id');
+      dm.query_os.ParamByName('id').Value := idOS;
+      dm.query_os.Open;
+
+      dm.query_detalhes_pro_os.Close;
+      dm.query_detalhes_pro_os.SQL.Clear;
+      dm.query_detalhes_pro_os.SQL.Add('SELECT * from detalhes_os where item_tipo = :item_tipo and id_os = :id');
+      dm.query_detalhes_pro_os.ParamByName('item_tipo').Value := 'p';
+      dm.query_detalhes_pro_os.ParamByName('id').Value := idOS;
+      dm.query_detalhes_pro_os.Open;
+
+      dm.query_detalhes_serv_os.Close;
+      dm.query_detalhes_serv_os.SQL.Clear;
+      dm.query_detalhes_serv_os.SQL.Add('SELECT * from detalhes_os where item_tipo = :item_tipo and id_os = :id');
+      dm.query_detalhes_serv_os.ParamByName('item_tipo').Value := 's';
+      dm.query_detalhes_serv_os.ParamByName('id').Value := idOS;
+      dm.query_detalhes_serv_os.Open;
+
+      //Chamar o Relatório
+      dm.rel_comprovante.LoadFromFile(GetCurrentDir + '\rel\relOS.fr3');
+      //dm.rel_comprovante.ShowReport();
+      //dm.rel_comprovante.PrintOptions.ShowDialog:= False;
+      dm.rel_Os.ShowReport;
+
+
+
+
+end;
+
+procedure TFrmOrdemServico.limparcampos;
+begin
+EdtNome.Text := '';
+EdtEndereco.Text := '';
+EdtTel.Text := '(__)_____-____';
+
+EdtCodservicos.Text := '';
+EdtCodProdutos.Text := '';
+EdtTotalServicos.Text := '';
+EdtTotalprodutos.Text := '';
+
+EdtQuantidadePro.Text := '1';
+EdtQuantidadeServ.Text := '1';
+EdtNome.SetFocus;
+end;
+
+procedure TFrmOrdemServico.limparProdutos;
+begin
+EdtCodProdutos.Text := '';
+
+end;
+
+procedure TFrmOrdemServico.limparServicos;
+begin
+EdtCodservicos.Text := '';
+end;
+
+procedure TFrmOrdemServico.limparvariaveis;
+begin
+
+ ValorRecebido := 0;
+ valorProduto := 0;
+ valorSevico := 0;
+ totalItem := 0;
+ totalItem := 0;
+ totalProdutos := 0;
+ totalVendaServ := 0;
+ totalVenda := 0;
+
+
+end;
+
+procedure TFrmOrdemServico.listarOS;
+begin
+       dm.query_os.Close;
+       dm.query_os.SQL.Clear;
+       dm.query_os.SQL.Add('SELECT * from ordens_servicos order by data desc limit 10');
+       dm.query_os.Open;
+end;
+
+procedure TFrmOrdemServico.listarProOS;
+begin
+       dm.query_detalhes_pro_os.Close;
+       dm.query_detalhes_pro_os.SQL.Clear;
+       dm.query_detalhes_pro_os.SQL.Add('SELECT * from detalhes_os where item_tipo = :p and id_os = 0 and funcionario = :func order by id desc limit 10');
+       dm.query_detalhes_pro_os.ParamByName('p').Value := 'p';
+       dm.query_detalhes_pro_os.ParamByName('func').Value := nomeUsuario;
+       dm.query_detalhes_pro_os.Open;
+end;
+
+procedure TFrmOrdemServico.listarServOS;
+begin
+       dm.query_detalhes_serv_os.Close;
+       dm.query_detalhes_serv_os.SQL.Clear;
+       dm.query_detalhes_serv_os.SQL.Add('SELECT * from detalhes_os where item_tipo = :s and id_os = 0 and funcionario = :func order by id desc limit 10');
+       dm.query_detalhes_serv_os.ParamByName('s').Value := 's';
+       dm.query_detalhes_serv_os.ParamByName('func').Value := nomeUsuario;
+       dm.query_detalhes_serv_os.Open;
+end;
+
+
+procedure TFrmOrdemServico.salvarItensProdetOs;
+var
+estoqueanterior : Double;
+begin
+
+EdtQuantidadePro.Enabled := true;
+
+
+    if (Trim(edtQuantidadePro.Text) = '') or (edtQuantidadePro.Text = '0') then
+     begin
+         MessageDlg('Insira a quantidade correta!', mtInformation, mbOKCancel, 0);
+         edtQuantidadePro.SetFocus;
+         EdtCodProdutos.Text := '';
+         exit;
+     end;
+
+
+
+
+associarCamposDetProOS;
+
+dm.tb_detalhes_os.Post;
+
+listarProOS;
+
+
+MediaPlayer1.FileName :=  ExtractFileDir(GetCurrentDir) + '\Debug\img\barCode.wav';
+MediaPlayer1.Open;
+MediaPlayer1.Play;
+
+
+//ABATER DO ESTOQUE O PRODUTO
+
+     dm.query_detalhes_pro_os.Close;
+     dm.query_detalhes_pro_os.SQL.Clear;
+     dm.query_detalhes_pro_os.SQL.Add('SELECT * from detalhes_os where id_os = 0 and item_tipo = :p and funcionario = :func');
+     dm.query_detalhes_pro_os.ParamByName('p').Value := 'p';
+     dm.query_detalhes_pro_os.ParamByName('func').Value := nomeUsuario;
+     dm.query_detalhes_pro_os.Open;
+
+
+       //estoque := strToFloat(edtEstoque.Text) - strToFloat(edtQuantidade.Text);
+       estoque2 :=  dm.query_detalhes_pro_os.FieldByName('quantidade').Value;
+
+     dm.query_produtos.Close;
+     dm.query_produtos.SQL.Clear;
+     dm.query_produtos.SQL.Add('SELECT * from produtos where id = :id');
+     dm.query_produtos.ParamByName('id').Value := idProduto;
+     dm.query_produtos.Open;
+
+
+       estoqueanterior := dm.query_produtos.FieldByName('estoque').Value;
+       estoque := estoqueanterior - estoque2;
+
+       dm.query_produtos.Close;
+       dm.query_produtos.SQL.Clear;
+       dm.query_produtos.SQL.Add('UPDATE produtos set estoque = :estoque where id = :id');
+       dm.query_produtos.ParamByName('estoque').Value := estoque;
+
+       dm.query_produtos.ParamByName('id').Value := idProduto;
+       dm.query_produtos.ExecSQL;
+
+      totalizarOS;
+      EdtCodProdutos.Text := '';
+      EdtCodProdutos.SetFocus;
+      EdtQuantidadePro.Text := '1';
+      chamadaprodOS := '';
+
+
+
+end;
+
+procedure TFrmOrdemServico.salvarItensServdetOS;
+begin
+
+EdtQuantidadeServ.Enabled := true;
+
+
+    if (Trim(EdtQuantidadeServ.Text) = '') or (EdtQuantidadeServ.Text = '0') then
+     begin
+         MessageDlg('Insira a quantidade correta!', mtInformation, mbOKCancel, 0);
+         edtQuantidadePro.SetFocus;
+         EdtCodProdutos.Text := '';
+         exit;
+     end;
+
+
+
+
+associarCamposDetServOS;
+dm.tb_detalhes_os.Post;
+listarServOS;
+
+
+MediaPlayer1.FileName :=  ExtractFileDir(GetCurrentDir) + '\Debug\img\barCode.wav';
+MediaPlayer1.Open;
+MediaPlayer1.Play;
+
+      totalizarOS;
+      EdtCodservicos.Text := '';
+      EdtCodservicos.SetFocus;
+      EdtQuantidadeServ.Text := '1';
+      chamadaservOS := '';
+      totalProdutos := 0;
+      totalItem := 0;
+
+end;
+
+procedure TFrmOrdemServico.salvarOrdemS;
+
+begin
+      salvarOs;
+
+      associarCamposOS;
+
+      dm.tb_os.Post;
+
+
+
+      //RELACIONAR O ID DA VENDA COM OS id itens DOS ITENS
+      dm.query_os.Close;
+      dm.query_os.SQL.Clear;
+      dm.query_os.SQL.Add('SELECT * FROM ordens_servicos WHERE id=(SELECT max(id) FROM ordens_servicos )');
+     /// dm.query_os.SQL.Add('SELECT * from ordens_servicos where id =(SELECT max(id)');
+      //dm.query_vendas.ParamByName('func').Value := nomeFunc;
+      dm.query_os.Open;
+
+
+       if not dm.query_os.isEmpty then
+       begin
+
+         idOS :=  dm.query_os['id'];
+
+       end;
+
+       //ShowMessage(IntToStr(idOS));
+
+       dm.query_detalhesOSCoringa.Close;
+      dm.query_detalhesOSCoringa.SQL.Clear;
+      dm.query_detalhesOSCoringa.SQL.Add('UPDATE detalhes_os set id_os = :id_os where id_os = 0 and funcionario = :func');
+      dm.query_detalhesOSCoringa.ParamByName('id_os').Value := abs(idOS);
+      dm.query_detalhesOSCoringa.ParamByName('func').Value := nomeUsuario;
+      dm.query_detalhesOSCoringa.ExecSQL;
+      //ShowMessage('passou');
+
+
+
+
+end;
+
+procedure TFrmOrdemServico.salvarOs;
+begin
+dm.tb_os.Active := true;
+dm.tb_detalhes_os.Active := true;
+end;
+
+
+
+procedure TFrmOrdemServico.totalizarOS;
+var
+totalproOS : double;
+totalservOS : double;
+begin
+
+if EdtTotalprodutos.Text <> '' then
+    begin
+       totalproOS := StrToFloat(EdtTotalprodutos.Text);
+    end;
+
+ if EdtTotalServicos.Text <> '' then
+    begin
+    totalservOS := StrToFloat(EdtTotalServicos.Text) ;
+    end;
+
+totalOS := totalproOS + totalservOS;
+edtTotalOS.Text := FloatTostr(totalOs);
+
+end;
+
+end.

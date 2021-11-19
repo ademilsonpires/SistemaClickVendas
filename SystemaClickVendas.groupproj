@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{07DC64B0-51EB-4044-932F-33ED2036418A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="SistemaClickVendas.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ClickVendasGeradorSerial.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="SistemaClickVendas">
+        <MSBuild Projects="SistemaClickVendas.dproj"/>
+    </Target>
+    <Target Name="SistemaClickVendas:Clean">
+        <MSBuild Projects="SistemaClickVendas.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SistemaClickVendas:Make">
+        <MSBuild Projects="SistemaClickVendas.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ClickVendasGeradorSerial">
+        <MSBuild Projects="ClickVendasGeradorSerial.dproj"/>
+    </Target>
+    <Target Name="ClickVendasGeradorSerial:Clean">
+        <MSBuild Projects="ClickVendasGeradorSerial.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClickVendasGeradorSerial:Make">
+        <MSBuild Projects="ClickVendasGeradorSerial.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="SistemaClickVendas;ClickVendasGeradorSerial"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="SistemaClickVendas:Clean;ClickVendasGeradorSerial:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="SistemaClickVendas:Make;ClickVendasGeradorSerial:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

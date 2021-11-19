@@ -1,0 +1,29 @@
+unit ExcluirDados;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons, Vcl.StdCtrls;
+
+type
+  TFrmExcluirDados = class(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    BtnExcluir: TSpeedButton;
+    dataInicial: TDateTimePicker;
+    dataFinal: TDateTimePicker;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmExcluirDados: TFrmExcluirDados;
+
+implementation
+
+{$R *.dfm}
+
+end.

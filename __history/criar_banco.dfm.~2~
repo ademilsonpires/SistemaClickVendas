@@ -1,0 +1,290 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 337
+  ClientWidth = 672
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Button1: TButton
+    Left = 384
+    Top = 248
+    Width = 75
+    Height = 25
+    Caption = 'Button1'
+    TabOrder = 0
+    OnClick = Button1Click
+  end
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      'User_Name=root'
+      'DriverID=MySQL')
+    Left = 96
+    Top = 72
+  end
+  object FDCommand1: TFDCommand
+    Connection = FDConnection1
+    CommandText.Strings = (
+      'CREATE DATABASE IF NOT EXISTS pdv3;'
+      ''
+      'USE pdv3;')
+    Left = 224
+    Top = 72
+  end
+  object FDCommand2: TFDCommand
+    Connection = FDConnection1
+    CommandText.Strings = (
+      
+        '-- phpMyAdmin SQL Dump'#10'-- version 5.0.4'#10'-- https://www.phpmyadmi' +
+        'n.net/'#10'--'#10'-- Host: 127.0.0.1'#10'-- Tempo de gera'#231#227'o: 24-Mar-2021 '#224's' +
+        ' 00:22'#10'-- Vers'#227'o do servidor: 10.4.17-MariaDB'#10'-- vers'#227'o do PHP: ' +
+        '8.0.2'#10#10'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";'#10'START TRANSACTION' +
+        ';'#10'SET time_zone = "+00:00";'#10#10#10'/*!40101 SET @OLD_CHARACTER_SET_CL' +
+        'IENT=@@CHARACTER_SET_CLIENT */;'#10'/*!40101 SET @OLD_CHARACTER_SET_' +
+        'RESULTS=@@CHARACTER_SET_RESULTS */;'#10'/*!40101 SET @OLD_COLLATION_' +
+        'CONNECTION=@@COLLATION_CONNECTION */;'#10'/*!40101 SET NAMES utf8mb4' +
+        ' */;'#10#10'--'#10'-- Banco de dados: `pdv`'#10'--'#10#10'-- -----------------------' +
+        '---------------------------------'#10#10'--'#10'-- Estrutura da tabela `ca' +
+        'ixa`'#10'--'#10#10'CREATE TABLE `caixa` ('#10'  `id` int(11) NOT NULL,'#10'  `data' +
+        '_abertura` date NOT NULL,'#10'  `hora_abertura` time NOT NULL,'#10'  `va' +
+        'lor_abertura` decimal(10,2) NOT NULL,'#10'  `funcionario_abertura` v' +
+        'archar(25) NOT NULL,'#10'  `data_fechamento` date DEFAULT NULL,'#10'  `h' +
+        'ora_fechamento` time DEFAULT NULL,'#10'  `valor_fechamento` decimal(' +
+        '10,2) DEFAULT NULL,'#10'  `valor_vendido` decimal(10,2) DEFAULT NULL'
+      
+        ','#10'  `valor_quebra` decimal(10,2) DEFAULT NULL,'#10'  `funcionario_fe' +
+        'chamento` varchar(25) DEFAULT NULL,'#10'  `num_caixa` int(11) NOT NU' +
+        'LL,'#10'  `operador` varchar(25) NOT NULL,'#10'  `status` varchar(10) NO' +
+        'T NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'--'#10'-- Extraindo da' +
+        'dos da tabela `caixa`'#10'--'#10#10#10'-- ----------------------------------' +
+        '----------------------'#10#10'--'#10'-- Estrutura da tabela `cargos`'#10'--'#10#10'C' +
+        'REATE TABLE `cargos` ('#10'  `id` int(11) NOT NULL,'#10'  `cargo` varcha' +
+        'r(25) NOT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'-- -------' +
+        '-------------------------------------------------'#10#10'--'#10'-- Estrutu' +
+        'ra da tabela `clientes`'#10'--'#10#10'CREATE TABLE `clientes` ('#10'  `id` int' +
+        '(11) NOT NULL,'#10'  `nome` varchar(30) NOT NULL,'#10'  `endereco` varch' +
+        'ar(50) NOT NULL,'#10'  `telefone` varchar(15) NOT NULL,'#10'  `debito` d' +
+        'ecimal(10,2) NOT NULL DEFAULT 0.00'#10') ENGINE=InnoDB DEFAULT CHARS' +
+        'ET=utf8;'#10#10'--'#10'-- Extraindo dados da tabela `clientes`'#10'--'#10#10'-- ----' +
+        '----------------------------------------------------'#10#10'--'#10'-- Estr' +
+        'utura da tabela `configuracoes`'#10'--'#10#10'CREATE TABLE `configuracoes`' +
+        ' '
+      
+        '('#10'  `id` int(11) NOT NULL,'#10'  `item` varchar(10) NOT NULL,'#10'  `con' +
+        'fig` varchar(10) NOT NULL,'#10'  `valor` varchar(10) NOT NULL'#10') ENGI' +
+        'NE=InnoDB DEFAULT CHARSET=utf8;'#10#10'--'#10'-- Extraindo dados da tabela' +
+        ' `configuracoes`'#10'--'#10#10'-- ----------------------------------------' +
+        '----------------'#10#10'--'#10'-- Estrutura da tabela `detalhes_notas`'#10'--'#10 +
+        #10'CREATE TABLE `detalhes_notas` ('#10'  `id` int(11) NOT NULL,'#10'  `id_' +
+        'nota` int(11) NOT NULL,'#10'  `produto` varchar(25) NOT NULL,'#10'  `val' +
+        'or` decimal(10,2) NOT NULL,'#10'  `quantidade` decimal(10,2) NOT NUL' +
+        'L,'#10'  `total` decimal(10,2) NOT NULL,'#10'  `id_produto` int(11) NOT ' +
+        'NULL,'#10'  `funcionario` varchar(25) NOT NULL,'#10'  `data` date NOT NU' +
+        'LL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'-- -------------------' +
+        '-------------------------------------'#10#10'--'#10'-- Estrutura da tabela' +
+        ' `detalhes_vendas`'#10'--'#10#10'CREATE TABLE `detalhes_vendas` ('#10'  `id` i' +
+        'nt(11) NOT NULL,'#10'  `id_venda` int(11) NOT NULL,'#10'  `produto` varc' +
+        'har(25) NOT NULL,'#10'  `valor` decimal(10,2) NOT NULL,'#10'  `quantidad' +
+        'e` decimal(10,2) NOT NULL,'#10'  `total` decimal(10,2) NOT NULL,'#10'  `'
+      
+        'id_produto` int(11) NOT NULL,'#10'  `funcionario` varchar(25) NOT NU' +
+        'LL,'#10'  `data` date NOT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;' +
+        #10#10'--'#10'-- Extraindo dados da tabela `detalhes_vendas`'#10'--'#10#10'-- -----' +
+        '---------------------------------------------------'#10#10'--'#10'-- Estru' +
+        'tura da tabela `empresa`'#10'--'#10#10'CREATE TABLE `empresa` ('#10'  `id` int' +
+        '(11) NOT NULL,'#10'  `empresa` varchar(30) NOT NULL,'#10'  `endereco` va' +
+        'rchar(50) NOT NULL,'#10'  `telefone` varchar(15) NOT NULL,'#10'  `cnpj` ' +
+        'varchar(15) NOT NULL,'#10'  `ie` varchar(15) NOT NULL,'#10'  `logotipo` ' +
+        'longblob DEFAULT NULL,'#10'  `email` varchar(30) DEFAULT NULL'#10') ENGI' +
+        'NE=InnoDB DEFAULT CHARSET=utf8;'#10#10'-- ----------------------------' +
+        '----------------------------'#10#10'--'#10'-- Estrutura da tabela `entrada' +
+        '_produtos`'#10'--'#10#10'CREATE TABLE `entrada_produtos` ('#10'  `id` int(11) ' +
+        'NOT NULL,'#10'  `produto` varchar(25) NOT NULL,'#10'  `quantidade` decim' +
+        'al(10,2) NOT NULL,'#10'  `fornecedor` int(11) NOT NULL,'#10'  `valor` de' +
+        'cimal(10,2) NOT NULL,'#10'  `total` decimal(10,2) NOT NULL,'#10'  `data`' +
+        ' date NOT NULL,'#10'  `id_produto` int(11) NOT NULL'#10') ENGINE=InnoDB '
+      
+        'DEFAULT CHARSET=utf8;'#10#10'-- --------------------------------------' +
+        '------------------'#10#10'--'#10'-- Estrutura da tabela `fornecedores`'#10'--'#10 +
+        #10'CREATE TABLE `fornecedores` ('#10'  `id` int(11) NOT NULL,'#10'  `nome`' +
+        ' varchar(25) NOT NULL,'#10'  `produto` varchar(25) NOT NULL,'#10'  `ende' +
+        'reco` varchar(30) NOT NULL,'#10'  `telefone` varchar(15) NOT NULL,'#10' ' +
+        ' `data` date NOT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'-- ' +
+        '--------------------------------------------------------'#10#10'--'#10'-- ' +
+        'Estrutura da tabela `funcionarios`'#10'--'#10#10'CREATE TABLE `funcionario' +
+        's` ('#10'  `id` int(11) NOT NULL,'#10'  `nome` varchar(30) NOT NULL,'#10'  `' +
+        'cpf` varchar(20) NOT NULL,'#10'  `telefone` varchar(15) DEFAULT NULL' +
+        ','#10'  `endereco` varchar(50) DEFAULT NULL,'#10'  `cargo` varchar(25) N' +
+        'OT NULL,'#10'  `data` date NOT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=' +
+        'utf8;'#10#10'-- ------------------------------------------------------' +
+        '--'#10#10'--'#10'-- Estrutura da tabela `gastos`'#10'--'#10#10'CREATE TABLE `gastos`' +
+        ' ('#10'  `id` int(11) NOT NULL,'#10'  `motivo` varchar(25) NOT NULL,'#10'  `' +
+        'valor` decimal(10,2) NOT NULL,'#10'  `funcionario` varchar(20) NOT N'
+      
+        'ULL,'#10'  `data` date NOT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8' +
+        ';'#10#10'--'#10'-- Extraindo dados da tabela `gastos`'#10'--'#10#10'-- -------------' +
+        '-------------------------------------------'#10#10'--'#10'-- Estrutura da ' +
+        'tabela `movimentacoes`'#10'--'#10#10'CREATE TABLE `movimentacoes` ('#10'  `id`' +
+        ' int(11) NOT NULL,'#10'  `tipo` varchar(10) NOT NULL,'#10'  `movimento` ' +
+        'varchar(20) NOT NULL,'#10'  `valor` decimal(10,2) NOT NULL,'#10'  `funci' +
+        'onario` varchar(20) NOT NULL,'#10'  `data` date NOT NULL,'#10'  `id_movi' +
+        'mento` int(11) NOT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'-' +
+        '-'#10'-- Extraindo dados da tabela `movimentacoes`'#10'--'#10#10'-- ----------' +
+        '----------------------------------------------'#10#10'--'#10'-- Estrutura ' +
+        'da tabela `notadecompra`'#10'--'#10#10'CREATE TABLE `notadecompra` ('#10'  `id' +
+        '` int(11) NOT NULL,'#10'  `numeronota` varchar(50) NOT NULL,'#10'  `forn' +
+        'ecedor` varchar(15) NOT NULL,'#10'  `total` decimal(10,2) NOT NULL,'#10 +
+        '  `funcionario` varchar(30) NOT NULL,'#10'  `data` date NOT NULL'#10') E' +
+        'NGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'-- -------------------------' +
+        '-------------------------------'#10#10'--'#10'-- Estrutura da tabela `prod'
+      
+        'utos`'#10'--'#10#10'CREATE TABLE `produtos` ('#10'  `id` int(11) NOT NULL,'#10'  `' +
+        'codigo` varchar(50) DEFAULT NULL,'#10'  `nome` varchar(25) NOT NULL,' +
+        #10'  `descricao` varchar(35) NOT NULL,'#10'  `valor` decimal(10,2) NOT' +
+        ' NULL,'#10'  `valorcusto` decimal(10,2) NOT NULL,'#10'  `estoque` decima' +
+        'l(10,2) DEFAULT 0.00,'#10'  `data` date DEFAULT NULL,'#10'  `imagem` lon' +
+        'gblob DEFAULT NULL,'#10'  `ultima_compra` date DEFAULT NULL'#10') ENGINE' +
+        '=InnoDB DEFAULT CHARSET=utf8;'#10#10'--'#10'-- Extraindo dados da tabela `' +
+        'produtos`'#10'--'#10#10'-- -----------------------------------------------' +
+        '---------'#10#10'--'#10'-- Estrutura stand-in para vista `pro_pdv`'#10'-- (Vej' +
+        'a abaixo para a view atual)'#10'--'#10'CREATE TABLE `pro_pdv` ('#10'`codigo`' +
+        ' varchar(50)'#10',`data` date'#10',`valor` decimal(10,2)'#10',`id` int(11)'#10',' +
+        '`nome` varchar(25)'#10',`descricao` varchar(35)'#10',`estoque` decimal(1' +
+        '0,2)'#10');'#10#10'-- ----------------------------------------------------' +
+        '----'#10#10'--'#10'-- Estrutura da tabela `registro`'#10'--'#10#10'CREATE TABLE `reg' +
+        'istro` ('#10'  `id` int(11) NOT NULL,'#10'  `numero` varchar(100) NOT NU' +
+        'LL,'#10'  `serialkey` varchar(100) NOT NULL DEFAULT '#39'0'#39','#10'  `data` da'
+      
+        'te DEFAULT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'--'#10'-- Ext' +
+        'raindo dados da tabela `registro`'#10'--'#10#10'-- -----------------------' +
+        '---------------------------------'#10#10'--'#10'-- Estrutura da tabela `sa' +
+        'ida_produtos`'#10'--'#10#10'CREATE TABLE `saida_produtos` ('#10'  `id` int(11)' +
+        ' NOT NULL,'#10'  `produto` varchar(25) NOT NULL,'#10'  `quantidade` deci' +
+        'mal(10,2) NOT NULL,'#10'  `motivo` varchar(25) NOT NULL,'#10'  `data` da' +
+        'te NOT NULL,'#10'  `id_produto` int(11) NOT NULL'#10') ENGINE=InnoDB DEF' +
+        'AULT CHARSET=utf8;'#10#10'-- -----------------------------------------' +
+        '---------------'#10#10'--'#10'-- Estrutura da tabela `usuarios`'#10'--'#10#10'CREATE' +
+        ' TABLE `usuarios` ('#10'  `id` int(11) NOT NULL,'#10'  `nome` varchar(30' +
+        ') NOT NULL,'#10'  `usuario` varchar(25) NOT NULL,'#10'  `senha` varchar(' +
+        '25) NOT NULL,'#10'  `cargo` varchar(25) NOT NULL,'#10'  `id_funcionario`' +
+        ' int(11) NOT NULL'#10') ENGINE=InnoDB DEFAULT CHARSET=utf8;'#10#10'--'#10'-- E' +
+        'xtraindo dados da tabela `usuarios`'#10'--'#10#10'INSERT INTO `usuarios` (' +
+        '`id`, `nome`, `usuario`, `senha`, `cargo`, `id_funcionario`) VAL' +
+        'UES'#10'(3, '#39'caixa'#39', '#39'caixa'#39', '#39'123'#39', '#39'Operador de Caixa'#39', 2),'#10'(7, '#39'A'
+      
+        'dministrador'#39', '#39'admin'#39', '#39'123'#39', '#39'admin'#39', 0);'#10#10'-- ----------------' +
+        '----------------------------------------'#10#10'--'#10'-- Estrutura da tab' +
+        'ela `vendas`'#10'--'#10#10'CREATE TABLE `vendas` ('#10'  `id` int(11) NOT NULL' +
+        ','#10'  `valor` decimal(10,2) NOT NULL,'#10'  `data` date NOT NULL,'#10'  `h' +
+        'ora` time NOT NULL,'#10'  `funcionario` varchar(25) NOT NULL,'#10'  `des' +
+        'conto` decimal(10,2) NOT NULL,'#10'  `valor_recebido` decimal(10,2) ' +
+        'NOT NULL,'#10'  `troco` decimal(10,2) NOT NULL,'#10'  `cliente` varchar(' +
+        '30) DEFAULT NULL,'#10'  `formadepagamento` varchar(15) DEFAULT NULL,' +
+        #10'  `status` varchar(12) NOT NULL,'#10'  `caixa` int(11) DEFAULT NULL' +
+        ','#10'  `statuscaixa` varchar(10) DEFAULT NULL'#10') ENGINE=InnoDB DEFAU' +
+        'LT CHARSET=utf8;'#10#10'--'#10'-- Extraindo dados da tabela `vendas`'#10#10'-- -' +
+        '-------------------------------------------------------'#10#10'--'#10'-- E' +
+        'strutura para vista `pro_pdv`'#10'--'#10'DROP TABLE IF EXISTS `pro_pdv`;' +
+        #10#10'CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECU' +
+        'RITY DEFINER VIEW `pro_pdv`  AS SELECT `produtos`.`codigo` AS `c' +
+        'odigo`, `produtos`.`data` AS `data`, `produtos`.`valor` AS `valo'
+      
+        'r`, `produtos`.`id` AS `id`, `produtos`.`nome` AS `nome`, `produ' +
+        'tos`.`descricao` AS `descricao`, `produtos`.`estoque` AS `estoqu' +
+        'e` FROM `produtos` ;'#10#10'--'#10'-- '#205'ndices para tabelas despejadas'#10'--'#10#10 +
+        '--'#10'-- '#205'ndices para tabela `caixa`'#10'--'#10'ALTER TABLE `caixa`'#10'  ADD P' +
+        'RIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `cargos`'#10'--'#10'ALTER ' +
+        'TABLE `cargos`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tab' +
+        'ela `clientes`'#10'--'#10'ALTER TABLE `clientes`'#10'  ADD PRIMARY KEY (`id`' +
+        ');'#10#10'--'#10'-- '#205'ndices para tabela `configuracoes`'#10'--'#10'ALTER TABLE `co' +
+        'nfiguracoes`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tabel' +
+        'a `detalhes_notas`'#10'--'#10'ALTER TABLE `detalhes_notas`'#10'  ADD PRIMARY' +
+        ' KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `detalhes_vendas`'#10'--'#10'ALT' +
+        'ER TABLE `detalhes_vendas`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndi' +
+        'ces para tabela `empresa`'#10'--'#10'ALTER TABLE `empresa`'#10'  ADD PRIMARY' +
+        ' KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `entrada_produtos`'#10'--'#10'AL' +
+        'TER TABLE `entrada_produtos`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'n' +
+        'dices para tabela `fornecedores`'#10'--'#10'ALTER TABLE `fornecedores`'#10' ' +
+        ' '
+      
+        'ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `funcionarios' +
+        '`'#10'--'#10'ALTER TABLE `funcionarios`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'--' +
+        ' '#205'ndices para tabela `gastos`'#10'--'#10'ALTER TABLE `gastos`'#10'  ADD PRIM' +
+        'ARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `movimentacoes`'#10'--'#10'AL' +
+        'TER TABLE `movimentacoes`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndic' +
+        'es para tabela `notadecompra`'#10'--'#10'ALTER TABLE `notadecompra`'#10'  AD' +
+        'D PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `produtos`'#10'--'#10'A' +
+        'LTER TABLE `produtos`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices p' +
+        'ara tabela `registro`'#10'--'#10'ALTER TABLE `registro`'#10'  ADD PRIMARY KE' +
+        'Y (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `saida_produtos`'#10'--'#10'ALTER T' +
+        'ABLE `saida_produtos`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- '#205'ndices p' +
+        'ara tabela `usuarios`'#10'--'#10'ALTER TABLE `usuarios`'#10'  ADD PRIMARY KE' +
+        'Y (`id`);'#10#10'--'#10'-- '#205'ndices para tabela `vendas`'#10'--'#10'ALTER TABLE `ve' +
+        'ndas`'#10'  ADD PRIMARY KEY (`id`);'#10#10'--'#10'-- AUTO_INCREMENT de tabelas' +
+        ' despejadas'#10'--'#10#10'--'#10'-- AUTO_INCREMENT de tabela `caixa`'#10'--'#10'ALTER ' +
+        'TABLE `caixa`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUT'
+      
+        'O_INCREMENT=77;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `cargos`'#10'--'#10'ALTE' +
+        'R TABLE `cargos`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, ' +
+        'AUTO_INCREMENT=10;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `clientes`'#10'--' +
+        #10'ALTER TABLE `clientes`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCR' +
+        'EMENT, AUTO_INCREMENT=6;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `config' +
+        'uracoes`'#10'--'#10'ALTER TABLE `configuracoes`'#10'  MODIFY `id` int(11) NO' +
+        'T NULL AUTO_INCREMENT, AUTO_INCREMENT=2;'#10#10'--'#10'-- AUTO_INCREMENT d' +
+        'e tabela `detalhes_notas`'#10'--'#10'ALTER TABLE `detalhes_notas`'#10'  MODI' +
+        'FY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=229;'#10#10'--' +
+        #10'-- AUTO_INCREMENT de tabela `detalhes_vendas`'#10'--'#10'ALTER TABLE `d' +
+        'etalhes_vendas`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, A' +
+        'UTO_INCREMENT=1430;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `empresa`'#10'--' +
+        #10'ALTER TABLE `empresa`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCRE' +
+        'MENT, AUTO_INCREMENT=28;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `entrad' +
+        'a_produtos`'#10'--'#10'ALTER TABLE `entrada_produtos`'#10'  MODIFY `id` int(' +
+        '11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;'#10#10'--'#10'-- AUTO_INCR'
+      
+        'EMENT de tabela `fornecedores`'#10'--'#10'ALTER TABLE `fornecedores`'#10'  M' +
+        'ODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;'#10#10'-' +
+        '-'#10'-- AUTO_INCREMENT de tabela `funcionarios`'#10'--'#10'ALTER TABLE `fun' +
+        'cionarios`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_I' +
+        'NCREMENT=13;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `gastos`'#10'--'#10'ALTER T' +
+        'ABLE `gastos`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUT' +
+        'O_INCREMENT=18;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `movimentacoes`'#10 +
+        '--'#10'ALTER TABLE `movimentacoes`'#10'  MODIFY `id` int(11) NOT NULL AU' +
+        'TO_INCREMENT, AUTO_INCREMENT=245;'#10#10'--'#10'-- AUTO_INCREMENT de tabel' +
+        'a `notadecompra`'#10'--'#10'ALTER TABLE `notadecompra`'#10'  MODIFY `id` int' +
+        '(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;'#10#10'--'#10'-- AUTO_INC' +
+        'REMENT de tabela `produtos`'#10'--'#10'ALTER TABLE `produtos`'#10'  MODIFY `' +
+        'id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=821;'#10#10'--'#10'-- ' +
+        'AUTO_INCREMENT de tabela `registro`'#10'--'#10'ALTER TABLE `registro`'#10'  ' +
+        'MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;'#10 +
+        #10'--'#10'-- AUTO_INCREMENT de tabela `saida_produtos`'#10'--'#10'ALTER TABLE '
+      
+        '`saida_produtos`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, ' +
+        'AUTO_INCREMENT=11;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `usuarios`'#10'--' +
+        #10'ALTER TABLE `usuarios`'#10'  MODIFY `id` int(11) NOT NULL AUTO_INCR' +
+        'EMENT, AUTO_INCREMENT=17;'#10#10'--'#10'-- AUTO_INCREMENT de tabela `venda' +
+        's`'#10'--'#10'ALTER TABLE `vendas`'#10'  MODIFY `id` int(11) NOT NULL AUTO_I' +
+        'NCREMENT, AUTO_INCREMENT=240;'#10'COMMIT;'#10#10'/*!40101 SET CHARACTER_SE' +
+        'T_CLIENT=@OLD_CHARACTER_SET_CLIENT */;'#10'/*!40101 SET CHARACTER_SE' +
+        'T_RESULTS=@OLD_CHARACTER_SET_RESULTS */;'#10'/*!40101 SET COLLATION_' +
+        'CONNECTION=@OLD_COLLATION_CONNECTION */;')
+    MacroData = <
+      item
+        Value = Null
+        Name = '40101'
+      end>
+    Left = 224
+    Top = 152
+  end
+  object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
+    VendorLib = 'C:\LibMysql\libMysql.dll'
+    Left = 472
+    Top = 72
+  end
+end

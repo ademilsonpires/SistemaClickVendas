@@ -1,0 +1,276 @@
+unit ContasaReceber;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ComCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls;
+
+type
+  TFrmContasReceber = class(TForm)
+    grid: TDBGrid;
+    BtnFinalizarDuplicata: TSpeedButton;
+    dataInicial: TDateTimePicker;
+    dataFinal: TDateTimePicker;
+    cbduplicata: TComboBox;
+    rbemissao: TRadioButton;
+    rbvencimento: TRadioButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Panel1: TPanel;
+    Label5: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Edtcodcli: TEdit;
+    Panel2: TPanel;
+    Label6: TLabel;
+    Label7: TLabel;
+    lblTotal: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    TotalizarDup: TLabel;
+    Label13: TLabel;
+    procedure FormShow(Sender: TObject);
+    procedure dataInicialChange(Sender: TObject);
+    procedure dataFinalChange(Sender: TObject);
+    procedure cbduplicataChange(Sender: TObject);
+    procedure EdtcodcliChange(Sender: TObject);
+    procedure rbemissaoClick(Sender: TObject);
+    procedure rbvencimentoClick(Sender: TObject);
+    procedure gridCellClick(Column: TColumn);
+    procedure BtnFinalizarDuplicataClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+  private
+    { Private declarations }
+    procedure buscardata;
+    procedure totalizar;
+    procedure limpar;
+  public
+    { Public declarations }
+    tot: real;
+
+  end;
+
+var
+  FrmContasReceber: TFrmContasReceber;
+  Idduplicata : integer;
+
+implementation
+
+{$R *.dfm}             // cliente LIKE '%demil%'
+
+uses Modulo, Clientes;
+
+procedure TFrmContasReceber.BtnFinalizarDuplicataClick(Sender: TObject);
+begin
+
+  dm.tb_duplicata.Edit;
+
+
+  dm.query_duplicata.Close;
+  dm.query_duplicata.SQL.Clear;
+  dm.query_duplicata.SQL.Add('UPDATE duplicata set situacao = :situacao where id = :id');
+  dm.query_duplicata.ParamByName('situacao').Value := 'pg';
+  dm.query_duplicata.ParamByName('id').Value := Idduplicata;
+  dm.query_duplicata.ExecSQL;
+  MessageDlg('BAIXA DE DUPLICATA FINALIZADA!!', mtInformation, mbOKCancel, 0);
+
+
+
+end;
+
+procedure TFrmContasReceber.buscardata;
+begin
+
+
+ dm.query_duplicata.Close;
+ dm.query_duplicata.SQL.Clear;
+  if Edtcodcli.Text <> '' then
+    begin
+      if rbemissao.Checked = true then
+        begin
+         dm.query_duplicata.SQL.Add('select * from duplicata where data_cad >= :dataInicial and data_cad <= :dataFinal and situacao = :situacao and id_cliente = :id_cliente order by id desc') ;
+         dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+         dm.query_duplicata.ParamByName('id_cliente').Value := Edtcodcli.Text;
+          end;
+        if rbvencimento.Checked = true then
+          begin
+           dm.query_duplicata.SQL.Add('select * from duplicata where data_venc >= :dataInicial and data_venc <= :dataFinal and situacao = :situacao and id_cliente = :id_cliente order by id desc') ;
+           dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+           dm.query_duplicata.ParamByName('id_cliente').Value := Edtcodcli.Text;
+        end;
+
+
+        dm.query_duplicata.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+        dm.query_duplicata.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+        dm.query_duplicata.Open;
+    end
+    else
+    begin
+        if rbemissao.Checked = true then
+          begin
+           dm.query_duplicata.SQL.Add('select * from duplicata where data_cad >= :dataInicial and data_cad <= :dataFinal and situacao = :situacao order by id desc') ;
+           dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+            end
+            else
+            begin
+             dm.query_duplicata.SQL.Add('select * from duplicata where data_venc >= :dataInicial and data_venc <= :dataFinal and situacao = :situacao order by id desc') ;
+             dm.query_duplicata.ParamByName('situacao').Value :=  cbduplicata.Text;
+          end;
+
+
+          dm.query_duplicata.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+          dm.query_duplicata.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+          dm.query_duplicata.Open;
+    end
+
+
+end;
+
+procedure TFrmContasReceber.cbduplicataChange(Sender: TObject);
+begin
+
+buscardata;
+limpar;
+totalizar;
+end;
+
+procedure TFrmContasReceber.dataFinalChange(Sender: TObject);
+begin
+buscardata;
+limpar;
+totalizar;
+end;
+
+procedure TFrmContasReceber.dataInicialChange(Sender: TObject);
+begin
+buscardata;
+limpar;
+totalizar;
+end;
+
+procedure TFrmContasReceber.EdtcodcliChange(Sender: TObject);
+begin
+buscardata;
+limpar;
+totalizar;
+end;
+
+procedure TFrmContasReceber.FormActivate(Sender: TObject);
+begin
+  Edtcodcli.Text := idClientes;
+    buscardata;
+    limpar;
+    totalizar;
+
+end;
+
+procedure TFrmContasReceber.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_F1 then
+    begin
+        chamadactarecb := 'cta_rec';
+        FrmClientes := TFrmClientes.Create(self);
+        FrmClientes.ShowModal;
+
+    end;
+end;
+
+procedure TFrmContasReceber.FormShow(Sender: TObject);
+begin
+rbvencimento.Checked := true;
+cbduplicata.Text := 'vencidas';
+lblTotal.Caption := FormatFloat('R$ #,,,,0.00', strToFloat(lblTotal.Caption));
+dm.tb_duplicata.Active := False;
+dm.tb_duplicata.Active := True;
+
+   dm.query_duplicata.Close;
+   dm.query_duplicata.SQL.Clear;
+   dm.query_duplicata.SQL.Add('select * from duplicata WHERE data_venc = curDate() order by id desc') ;
+   dm.query_duplicata.Open;
+   TFloatField( dm.query_duplicata.FieldByName('valor')).DisplayFormat:='R$ #,,,,0.00';
+   dataInicial.Date := Date;
+   dataFinal.Date := Date;
+totalizar;
+end;
+
+procedure TFrmContasReceber.gridCellClick(Column: TColumn);
+begin
+
+  Idduplicata := dm.query_duplicata.FieldByName('id').Value;
+  BtnFinalizarDuplicata.Enabled := true;
+end;
+
+procedure TFrmContasReceber.limpar;
+begin
+tot := 0;
+TotalizarDup.Caption := FormatFloat('R$ #,,,,0.00', tot);
+
+end;
+
+procedure TFrmContasReceber.rbemissaoClick(Sender: TObject);
+begin
+  buscardata;
+limpar;
+totalizar;
+end;
+
+procedure TFrmContasReceber.rbvencimentoClick(Sender: TObject);
+begin
+   buscardata;
+limpar;
+totalizar;
+end;
+
+procedure TFrmContasReceber.totalizar;
+
+
+begin
+
+
+          if rbvencimento.Checked = true then
+           begin
+           //ShowMessage('vencimento');
+                dm.query_coringa.Close;
+                dm.query_coringa.SQL.Clear;
+                dm.query_coringa.SQL.Add('select sum(valor) as total from duplicata where data_venc >= :dataInicial and data_venc <= :dataFinal and id_cliente = :cliente and situacao <> "pg"') ;
+                dm.query_coringa.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+                dm.query_coringa.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+                 dm.query_coringa.ParamByName('cliente').Value := Edtcodcli.Text;
+                //ShowMessage('vencimento sql ok');
+                dm.query_coringa.Prepare;
+                dm.query_coringa.Open;
+                tot := dm.query_coringa.FieldByName('total').AsFloat;
+                //ShowMessage(FloatToStr(tot));
+
+               // TotalizarDup.Caption := FloatToStr(tot);
+                TotalizarDup.Caption := FormatFloat('R$ #,,,,0.00', tot);
+                tot := 0;
+           end;
+
+           if rbemissao.Checked = true then
+             begin
+               dm.query_coringa.Close;
+                dm.query_coringa.SQL.Clear;
+                dm.query_coringa.SQL.Add('select sum(valor) as total from duplicata where data_cad >= :dataInicial and data_cad <= :dataFinal and id_cliente = :cliente and situacao <> "pg"');
+                dm.query_coringa.ParamByName('dataInicial').Value :=  FormatDateTime('yyyy/mm/dd', dataInicial.Date);
+                dm.query_coringa.ParamByName('dataFinal').Value :=  FormatDateTime('yyyy/mm/dd', dataFinal.Date);
+                dm.query_coringa.ParamByName('cliente').Value := Edtcodcli.Text;
+                //ShowMessage('vencimento sql ok');
+                dm.query_coringa.Prepare;
+                dm.query_coringa.Open;
+                tot := dm.query_coringa.FieldByName('total').AsFloat;
+                //ShowMessage(FloatToStr(tot));
+                TotalizarDup.Caption := FormatFloat('R$ #,,,,0.00', tot);
+                //TotalizarDup.Caption := FloatToStr(tot);
+                tot := 0;
+             end;
+
+
+   end;
+end.

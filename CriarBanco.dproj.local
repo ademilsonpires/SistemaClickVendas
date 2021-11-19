@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2021/03/18 21:27:01.000.943,=C:\Users\tic\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2021/03/18 21:50:24.000.747,C:\SistemaClickVendas\criar_banco.dfm=C:\Users\tic\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2021/03/18 21:50:24.000.747,C:\SistemaClickVendas\criar_banco.pas=C:\Users\tic\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2021/03/18 21:50:38.000.103,C:\SistemaClickVendas\CriarBanco.dproj=C:\Users\tic\Documents\Embarcadero\Studio\Projects\Project2.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

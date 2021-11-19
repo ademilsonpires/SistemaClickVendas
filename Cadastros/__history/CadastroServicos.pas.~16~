@@ -1,0 +1,242 @@
+unit CadastroServicos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Buttons, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.ExtCtrls;
+
+type
+  TFrmCadastroServicos = class(TForm)
+    Panel1: TPanel;
+    Label2: TLabel;
+    EdtNome: TEdit;
+    Label1: TLabel;
+    EdtValor: TEdit;
+    grid: TDBGrid;
+    btnNovo: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    BtnEditar: TSpeedButton;
+    BtnExcluir: TSpeedButton;
+    Panel4: TPanel;
+    Label3: TLabel;
+    EdtBuscarNome: TEdit;
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure BtnEditarClick(Sender: TObject);
+    procedure gridCellClick(Column: TColumn);
+    procedure FormCreate(Sender: TObject);
+    procedure BtnExcluirClick(Sender: TObject);
+  private
+    { Private declarations }
+    procedure associarcampos;
+    procedure listar;
+    procedure limpar;
+    procedure selectserv;
+  public
+    { Public declarations }
+
+  end;
+
+var
+  FrmCadastroServicos: TFrmCadastroServicos;
+  id : string;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+procedure TFrmCadastroServicos.associarcampos;
+begin
+dm.tb_servicos.FieldByName('nome').Value := EdtNome.Text;
+dm.tb_servicos.FieldByName('valor').Value := EdtValor.Text;
+
+end;
+
+procedure TFrmCadastroServicos.BtnEditarClick(Sender: TObject);
+var
+servicos : string;
+begin
+
+    if Trim(EdtNome.Text) = '' then
+     begin
+         MessageDlg('Preencha o Serviço/Taxa a ser cadastrado!', mtInformation, mbOKCancel, 0);
+         EdtNome.SetFocus;
+         exit;
+     end;
+
+    { //VERIFICAR SE O serviço JÁ ESTÁ CADASTRADO
+     dm.query_servicos.Close;
+     dm.query_servicos.SQL.Clear;
+     dm.query_servicos.SQL.Add('SELECT * from servicos where nome = ' + QuotedStr(Trim(edtNome.Text)));
+     dm.query_servicos.Open;
+
+     if not dm.query_servicos.isEmpty then
+     begin
+       servicos :=  dm.query_servicos['nome'];
+       MessageDlg('O Serviço/Taxa ' + servicos + ' já está cadastrado!', mtInformation, mbOKCancel, 0);
+       edtNome.Text := '';
+       edtNome.SetFocus;
+       exit;
+     end; }
+
+     associarCampos;
+     dm.query_servicos.Close;
+     dm.query_servicos.SQL.Clear;
+     dm.query_servicos.SQL.Add('UPDATE servicos set nome = :nome, valor = :valor where id = :id');
+     dm.query_servicos.ParamByName('nome').Value := edtNome.Text;
+     dm.query_servicos.ParamByName('valor').Value := EdtValor.Text;
+     dm.query_servicos.ParamByName('id').Value := idServ;
+     dm.query_servicos.ExecSQL;
+
+     listar;
+     MessageDlg('Editado com Sucesso!!', mtInformation, mbOKCancel, 0);
+     btnEditar.Enabled := false;
+     BtnExcluir.Enabled := false;
+     edtNome.Text := '';
+end;
+
+procedure TFrmCadastroServicos.BtnExcluirClick(Sender: TObject);
+begin
+if MessageDlg('Deseja Excluir o registro?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+begin
+  //dm.tb_Cargos.Delete;
+    //DELETANDO serviços
+
+    dm.query_servicos.Close;
+    dm.query_servicos.SQL.Clear;
+    dm.query_servicos.SQL.Add('DELETE FROM servicos WHERE id = :id');
+    dm.query_servicos.ParamByName('id').Value := idServ;
+
+    dm.query_servicos.Execute;
+    MessageDlg('Deletado com Sucesso!!', mtInformation, mbOKCancel, 0);
+
+
+
+     btnEditar.Enabled := false;
+     BtnExcluir.Enabled := false;
+     edtNome.Text := '';
+     listar;
+     id := '';
+
+end;
+end;
+
+procedure TFrmCadastroServicos.btnNovoClick(Sender: TObject);
+begin
+dm.tb_servicos.Insert;
+EdtNome.Enabled := true;
+EdtValor.Enabled := true;
+
+btnSalvar.Enabled := true;
+edtNome.Text := '';
+EdtValor.Text := '';
+edtNome.SetFocus;
+dm.tb_servicos.Insert;
+listar;
+
+
+end;
+
+procedure TFrmCadastroServicos.btnSalvarClick(Sender: TObject);
+var
+servico : string;
+begin
+
+    if Trim(EdtNome.Text) = '' then
+     begin
+         MessageDlg('Preencha o Serviço ou Taxa a ser cadastrado!', mtInformation, mbOKCancel, 0);
+         EdtNome.SetFocus;
+         exit;
+     end;
+
+     //VERIFICAR SE O SERVIÇO JÁ ESTÁ CADASTRADO
+     dm.query_servicos.Close;
+     dm.query_servicos.SQL.Clear;
+     dm.query_servicos.SQL.Add('SELECT * from servicos where nome = ' + QuotedStr(Trim(edtNome.Text)));
+     dm.query_servicos.Open;
+
+     if not dm.query_servicos.isEmpty then
+     begin
+       servico :=  dm.query_servicos['nome'];
+       MessageDlg('O serviço/taxa ' + servico + ' já está cadastrado!', mtInformation, mbOKCancel, 0);
+       edtNome.Text := '';
+       edtNome.SetFocus;
+       exit;
+
+     end;
+
+
+
+associarCampos;
+dm.tb_servicos.Post;
+MessageDlg('Salvo com Sucesso', mtInformation, mbOKCancel, 0);
+edtNome.Text := '';
+EdtValor.Text := '';
+edtNome.Enabled := false;
+EdtValor.Enabled := false;
+btnSalvar.Enabled := false;
+listar;
+end;
+
+procedure TFrmCadastroServicos.FormCreate(Sender: TObject);
+begin
+dm.tb_servicos.Active := true;
+listar;
+end;
+
+procedure TFrmCadastroServicos.gridCellClick(Column: TColumn);
+begin
+    ShowMessage(id);
+    edtNome.Enabled := True;
+    EdtValor.Enabled := True;
+    btnEditar.Enabled := true;
+    btnExcluir.Enabled := true;
+    limpar;
+    selectserv;
+
+
+   dm.tb_servicos.Edit;
+
+    //if dm.query_servicos.FieldByName('nome').Value <> null then
+    edtNome.Text := dm.query_servicos.FieldByName('nome').Value;
+    EdtValor.Text := dm.query_servicos.FieldByName('valor').Value;
+
+   idServ := dm.query_servicos.FieldByName('id').Value;
+    //idServ := dm.query_servicos['id'];
+    ShowMessage(id);
+end;
+
+procedure TFrmCadastroServicos.limpar;
+begin
+EdtNome.Text := '';
+EdtValor.Text := '';
+id := '';
+
+end;
+
+procedure TFrmCadastroServicos.listar;
+begin
+dm.query_servicos.Close;
+     dm.query_servicos.SQL.Clear;
+     dm.query_servicos.SQL.Add('SELECT * from servicos order by nome asc');
+     dm.query_servicos.Open;
+end;
+
+procedure TFrmCadastroServicos.selectserv;
+begin
+
+
+                   dm.query_coringa.Close;
+                   dm.query_coringa.SQL.Clear;
+                   dm.query_coringa.SQL.Add('select * from servicos');
+                   dm.query_coringa.Open;
+
+
+
+end;
+
+end.

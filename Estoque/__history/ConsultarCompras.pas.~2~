@@ -1,0 +1,53 @@
+unit ConsultarCompras;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TFrmConsultaCompras = class(TForm)
+    Label3: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    BtnCancelar: TSpeedButton;
+    btnComprovante: TSpeedButton;
+    cbFornecedor: TComboBox;
+    dataInicial: TDateTimePicker;
+    dataFinal: TDateTimePicker;
+    grid: TDBGrid;
+  private
+    { Private declarations }
+    procedure carregarCombobox;
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmConsultaCompras: TFrmConsultaCompras;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+{ TFrmConsultaCompras }
+
+procedure TFrmConsultaCompras.carregarCombobox;
+begin
+      dm.query_forn.Close;
+      dm.query_forn.Open;
+
+  if not dm.query_forn.isEmpty then
+      begin
+        while not dm.query_forn.Eof do
+        begin
+          cbFornecedor.Items.Add(dm.query_forn.FieldByName('nome').AsString);
+          dm.query_forn.Next;
+        end;
+      end;
+
+end;

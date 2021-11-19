@@ -1,0 +1,40 @@
+unit DetalhamentoEntrada;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ExtCtrls, Vcl.Grids,
+  Vcl.DBGrids;
+
+type
+  TFrmDetalhesNota = class(TForm)
+    grid: TDBGrid;
+    Panel1: TPanel;
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmDetalhesNota: TFrmDetalhesNota;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo;
+
+procedure TFrmDetalhesNota.FormShow(Sender: TObject);
+begin
+      dm.query_detalhes_notas.Close;
+      dm.query_detalhes_notas.SQL.Clear;
+      dm.query_detalhes_notas.SQL.Add('select * from detalhes_notas where numeronota = :numeronota order by id desc');
+      //dm.query_vendas.SQL.Add('select * from vendas where id = :id order by id desc');
+      dm.query_detalhes_notas.ParamByName('numeronota').Value := numeronota;
+      dm.query_detalhes_notas.Open;
+end;
+
+end.

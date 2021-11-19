@@ -1,0 +1,143 @@
+unit Empresa;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  TFrmEmpresa = class(TForm)
+    Label2: TLabel;
+    EdtNome: TEdit;
+    EdtEndereco: TEdit;
+    Label5: TLabel;
+    Label3: TLabel;
+    EdtCnpj: TMaskEdit;
+    EdtTel: TMaskEdit;
+    Label4: TLabel;
+    Label1: TLabel;
+    EdtIe: TMaskEdit;
+    BtnEditar: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    procedure BtnEditarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+
+
+      procedure habilitarCampos;
+      procedure desabilitarCampos;
+
+      procedure associarCampos;
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmEmpresa: TFrmEmpresa;
+
+implementation
+
+{$R *.dfm}
+
+uses Modulo, EntradasProdutos;
+
+{ TForm1 }
+
+procedure TFrmEmpresa.associarCampos;
+begin
+
+      dm.tb_empresa.FieldByName('endereco').Value := EdtEndereco.Text;
+      dm.tb_empresa.FieldByName('empresa').Value := EdtNome.Text;
+      dm.tb_empresa.FieldByName('telefone').Value := EdtTel.Text;
+      dm.tb_empresa.FieldByName('cnpj').Value := EdtCnpj.Text;
+      dm.tb_empresa.FieldByName('ie').Value := EdtIe.Text;
+ end;
+
+procedure TFrmEmpresa.BtnEditarClick(Sender: TObject);
+begin
+habilitarCampos;
+btnSalvar.Enabled := true;
+
+dm.tb_empresa.Insert;
+end;
+
+procedure TFrmEmpresa.btnSalvarClick(Sender: TObject);
+var
+ id : string;
+begin
+    if Trim(EdtNome.Text) = '' then
+       begin
+           MessageDlg('Preencha o Nome da Empresa!', mtInformation, mbOKCancel, 0);
+           EdtNome.SetFocus;
+           exit;
+       end;
+
+       dm.query_empresa.Close;
+           dm.query_empresa.SQL.Clear;
+           dm.query_empresa.SQL.Add('SELECT * from empresa');
+           dm.query_empresa.Open;
+
+
+
+           {if dm.query_empresa.isEmpty then
+           begin
+
+             associarCampos;
+             dm.query_empresa.Close;
+             dm.query_empresa.SQL.Clear;
+             dm.query_empresa.SQL.Add('UPDATE empresa set empresa = :empresa, cnpj = :cnpj, ie = :ie, endereco = :endereco, telefone = :telefone, where id = id');
+             dm.query_empresa.ParamByName('empresa').Value := edtNome.Text;
+              dm.query_empresa.ParamByName('cnpj').Value := EdtCnpj.Text;
+               dm.query_empresa.ParamByName('endereco').Value := EdtEndereco.Text;
+                dm.query_empresa.ParamByName('telefone').Value := edtTel.Text;
+                 dm.query_empresa.ParamByName('ie').Value := EdtIe.Text;
+                   dm.query_func.ExecSQL;
+             exit
+           end;  }
+
+  MessageDlg('chegou do associar', mtInformation, mbOKCancel, 0);
+  associarCampos;
+  MessageDlg('passou do associar', mtInformation, mbOKCancel, 0);
+  dm.tb_empresa.Post;
+  MessageDlg('Salvo com Sucesso', mtInformation, mbOKCancel, 0);
+  desabilitarCampos;
+  btnSalvar.Enabled := false;
+
+
+end;
+
+procedure TFrmEmpresa.desabilitarCampos;
+begin
+
+  EdtNome.Enabled := false;
+  EdtEndereco.Enabled := false;
+  EdtTel.Enabled := false;
+  EdtCnpj.Enabled := false;
+  EdtIe.Enabled := false;
+end;
+
+procedure TFrmEmpresa.FormCreate(Sender: TObject);
+begin
+dm.tb_empresa.Active := true;
+end;
+
+procedure TFrmEmpresa.FormShow(Sender: TObject);
+begin
+desabilitarCampos;
+btnSalvar.Enabled := false;
+end;
+
+procedure TFrmEmpresa.habilitarCampos;
+begin
+    EdtNome.Enabled := true;
+  EdtEndereco.Enabled := true;
+  EdtTel.Enabled := true;
+  EdtCnpj.Enabled := true;
+  EdtIe.Enabled := true;
+end;
+
+end.

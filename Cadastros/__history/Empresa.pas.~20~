@@ -1,0 +1,242 @@
+unit Empresa;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.Buttons,
+  Data.DB, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtDlgs;
+
+type
+  TFrmEmpresa = class(TForm)
+    Label2: TLabel;
+    EdtNome: TEdit;
+    EdtEndereco: TEdit;
+    Label5: TLabel;
+    Label3: TLabel;
+    EdtCnpj: TMaskEdit;
+    EdtTel: TMaskEdit;
+    Label4: TLabel;
+    Label1: TLabel;
+    EdtIe: TMaskEdit;
+    BtnEditar: TSpeedButton;
+    btnSalvar: TSpeedButton;
+    DBGrid1: TDBGrid;
+    imagem: TImage;
+    Panel1: TPanel;
+    btnAddLogotipo: TSpeedButton;
+    dialog: TOpenPictureDialog;
+    Label6: TLabel;
+    EdtEmail: TEdit;
+    procedure BtnEditarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnAddLogotipoClick(Sender: TObject);
+  private
+    { Private declarations }
+
+
+      procedure habilitarCampos;
+      procedure desabilitarCampos;
+
+      procedure associarCampos;
+      procedure listar;
+
+      procedure salvarFoto;
+      procedure carregarImgPadrao;
+
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmEmpresa: TFrmEmpresa;
+  caminhoImg : string;
+  img : TPicture;
+  alterou : boolean;
+implementation
+
+{$R *.dfm}
+
+uses Modulo, EntradasProdutos;
+
+{ TForm1 }
+
+procedure TFrmEmpresa.associarCampos;
+begin
+
+      dm.tb_empresa.FieldByName('endereco').Value := EdtEndereco.Text;
+      dm.tb_empresa.FieldByName('empresa').Value := EdtNome.Text;
+      dm.tb_empresa.FieldByName('telefone').Value := EdtTel.Text;
+      dm.tb_empresa.FieldByName('cnpj').Value := EdtCnpj.Text;
+      dm.tb_empresa.FieldByName('ie').Value := EdtIe.Text;
+      dm.tb_empresa.FieldByName('email').Value := EdtEmail.Text;
+ end;
+
+procedure TFrmEmpresa.btnAddLogotipoClick(Sender: TObject);
+begin
+dialog.Execute();
+imagem.Picture.LoadFromFile(dialog.FileName);
+alterou := true;
+end;
+
+procedure TFrmEmpresa.BtnEditarClick(Sender: TObject);
+begin
+habilitarCampos;
+btnSalvar.Enabled := true;
+
+dm.tb_empresa.Insert;
+end;
+
+procedure TFrmEmpresa.btnSalvarClick(Sender: TObject);
+var
+ id : string;
+begin
+    if Trim(EdtNome.Text) = '' then
+       begin
+           MessageDlg('Preencha o Nome da Empresa!', mtInformation, mbOKCancel, 0);
+           EdtNome.SetFocus;
+           exit;
+       end;
+
+            dm.query_empresa.Close;
+           dm.query_empresa.SQL.Clear;
+           dm.query_empresa.SQL.Add('SELECT * from empresa');
+           dm.query_empresa.Open;
+           //id :=  dm.query_empresa.FieldByName('id').Value;
+
+
+           if not dm.query_empresa.isEmpty then
+           begin
+
+             {associarCampos;
+             salvarFoto;
+             dm.query_empresa.Close;
+             dm.query_empresa.SQL.Clear;
+             dm.query_empresa.SQL.Add('UPDATE empresa set empresa = :empresa, cnpj = :cnpj, ie = :ie, endereco = :endereco, telefone = :telefone where id = id');
+             dm.query_empresa.ParamByName('empresa').Value := edtNome.Text;
+              dm.query_empresa.ParamByName('cnpj').Value := EdtCnpj.Text;
+               dm.query_empresa.ParamByName('endereco').Value := EdtEndereco.Text;
+                dm.query_empresa.ParamByName('telefone').Value := edtTel.Text;
+                 dm.query_empresa.ParamByName('ie').Value := EdtIe.Text;
+                 //dm.query_empresa.ParamByName('registro').Value := id;
+                   dm.query_empresa.ExecSQL; }
+
+
+             associarCampos;
+             salvarFoto;
+             dm.query_empresa.Close;
+             dm.query_empresa.SQL.Clear;
+             dm.query_empresa.SQL.Add('DELETE  from empresa where  id = id');
+
+                 //dm.query_empresa.ParamByName('registro').Value := id;
+                   dm.query_empresa.ExecSQL;
+
+
+              dm.tb_empresa.Post;
+
+              MessageDlg('Salvo com Sucesso', mtInformation, mbOKCancel, 0);
+
+
+                    desabilitarCampos;
+              btnSalvar.Enabled := false;
+              BtnEditar.Enabled := true;
+              btnAddLogotipo.Enabled := false;
+              listar;
+
+           end
+           else
+           begin
+
+            associarCampos;
+            salvarFoto;
+
+              dm.tb_empresa.Post;
+              MessageDlg('Salvo com Sucesso', mtInformation, mbOKCancel, 0);
+              desabilitarCampos;
+              btnSalvar.Enabled := false;
+              BtnEditar.Enabled := true;
+              btnAddLogotipo.Enabled := false;
+              listar;
+           end;
+
+
+
+
+
+end;
+
+procedure TFrmEmpresa.carregarImgPadrao;
+begin
+   caminhoImg :=  ExtractFileDir(GetCurrentDir) + '\Debug\img\sem-foto.jpg';
+   imagem.Picture.LoadFromFile(caminhoImg);
+end;
+
+procedure TFrmEmpresa.desabilitarCampos;
+begin
+
+  EdtNome.Enabled := false;
+  EdtEndereco.Enabled := false;
+  EdtTel.Enabled := false;
+  EdtCnpj.Enabled := false;
+  EdtIe.Enabled := false;
+  EdtEmail.Enabled := false;
+end;
+
+procedure TFrmEmpresa.FormCreate(Sender: TObject);
+begin
+dm.tb_empresa.Active := true;
+end;
+
+procedure TFrmEmpresa.FormShow(Sender: TObject);
+
+begin
+desabilitarCampos;
+btnSalvar.Enabled := false;
+listar;
+carregarImgPadrao;
+
+end;
+
+procedure TFrmEmpresa.habilitarCampos;
+begin
+  EdtNome.Enabled := true;
+  EdtEndereco.Enabled := true;
+  EdtTel.Enabled := true;
+  EdtCnpj.Enabled := true;
+  EdtIe.Enabled := true;
+  EdtEmail.Enabled := true;
+  btnAddLogotipo.Enabled :=true;
+end;
+
+procedure TFrmEmpresa.listar;
+begin
+        dm.query_empresa.Close;
+       dm.query_empresa.SQL.Clear;
+       dm.query_empresa.SQL.Add('SELECT * from empresa order by empresa asc');
+       dm.query_empresa.Open;
+end;
+
+procedure TFrmEmpresa.salvarFoto;
+begin
+    if dialog.FileName <> '' then
+begin
+
+  img := TPicture.Create;
+  img.LoadFromFile(dialog.Filename);
+  dm.tb_empresa.FieldByName('logotipo').Assign(img);
+  img.Free;
+  dialog.Filename := ExtractFileDir(GetCurrentDir) + '\Debug\img\sem-foto.jpg';
+  alterou := false;
+
+end
+else
+begin
+ dm.tb_empresa.FieldByName('logotipo').Value := ExtractFileDir(GetCurrentDir) + '\Debug\img\sem-foto.jpg';
+
+end;
+
+end;
+
+end.
